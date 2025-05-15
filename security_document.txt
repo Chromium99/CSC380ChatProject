@@ -1,0 +1,51 @@
+Carlos Rodriguez
+Secure Chat Protocol Program – CSC380 Computer Security
+
+---
+
+Assumptions:
+For the secure chat implementation, I assumed that both communicating parties have already securely exchanged their RSA public keys prior to starting the session. This is similar to the model used by SSH, where each side has a trusted public key for the other.
+
+I also assumed that the adversary has full control over the network. This includes the ability to observe, intercept, modify, and replay any packets sent between the two parties. However, I assume that the attacker does not have access to the private RSA keys or the ability to break widely accepted cryptographic primitives (such as RSA-2048, AES-256, or HMAC-SHA256).
+
+---
+
+Security Claims:
+Our implementation defends against several important security threats:
+
+1. Confidentiality:
+   - All messages are encrypted using AES-256 in GCM mode.
+   - The session key used for encryption is derived through a 3-part Diffie-Hellman (3DH) exchange that provides perfect forward secrecy.
+   - This ensures that even if long-term keys are compromised in the future, past communications remain secure.
+
+2. Integrity:
+   - Every message includes an HMAC-SHA256 authentication tag.
+   - The HMAC is computed using the session key, which ensures the message was not tampered with in transit.
+
+3. Mutual Authentication:
+   - Each peer proves their identity by signing a random challenge (nonce) with their private RSA key.
+   - The other peer verifies this signature using the corresponding public key.
+   - This prevents impersonation attacks and confirms that both parties are who they claim to be.
+
+4. Replay Attack Prevention:
+   - Each session begins by exchanging a time-based nonce.
+   - Messages with old or reused nonces are rejected.
+   - This protects the protocol from attackers trying to replay old messages to trick a peer.
+
+---
+
+Malicious Communicating Party:
+If a malicious peer attempts to connect (e.g., by using a modified version of the client or server), the following safeguards apply:
+
+- If they do not possess the valid private key, they will fail RSA authentication and the session will be terminated.
+- If they tamper with message contents, HMAC verification will fail.
+- If they try to replay messages, the nonce-checking logic will detect and reject those messages.
+
+However, if the peer has a valid RSA keypair (e.g., was pre-trusted but is now compromised), they may still establish a session and send malicious content. In this case, the damage would be limited to that session due to the use of ephemeral 3DH keys (which provide forward secrecy).
+
+---
+
+Conclusion:
+This secure chat program protects against passive eavesdropping, active tampering, impersonation, and replay attacks. It follows modern cryptographic practices and mimics real-world protocols like SSH. While not invulnerable, it presents a strong baseline for secure communication between trusted peers.
+
+Thank you very much!
