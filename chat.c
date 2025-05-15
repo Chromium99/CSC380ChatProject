@@ -162,7 +162,5 @@ int main(int argc, char* argv[]) {
 
     printf("Secure handshake complete. Session key established. Ready to chat securely.\n");
 
-    // Add GTK message GUI logic here...
-
     return 0;
 }
