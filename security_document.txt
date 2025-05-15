@@ -11,7 +11,7 @@ I also assumed that the adversary has full control over the network. This includ
 ---
 
 Security Claims:
-Our implementation defends against several important security threats:
+My implementation defends against several important security threats:
 
 1. Confidentiality:
    - All messages are encrypted using AES-256 in GCM mode.
